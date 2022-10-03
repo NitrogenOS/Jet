@@ -2,6 +2,8 @@ use clap::{Arg, Command};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use toml;
+mod commands;
+use commands::{install};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
@@ -20,9 +22,7 @@ fn main() {
             .expect("is present")
             .map(|s| s.as_str())
             .collect();
-        for package in packages {
-            println!("{}", package)
-        }
+        install::install(packages)
     }
     if let Some(_) = matches.subcommand_matches("tempcmd") {
         let cfg = parse_config();
