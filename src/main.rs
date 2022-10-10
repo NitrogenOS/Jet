@@ -1,21 +1,13 @@
 use clap::{Arg, Command};
-use serde::{Deserialize, Serialize};
-use std::fs;
-use toml;
 mod commands;
-use commands::{install};
+use commands::{install, update, upgrade};
+mod package;
+use package::{Config};
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Config {
-    name: String,
-    description: String,
-    version: String,
-    author: String,
-    license: String,
-}
 
 fn main() {
     let matches = cli().get_matches();
+    // Install
     if let Some(sub_m) = matches.subcommand_matches("install") {
         let packages: Vec<&str> = sub_m
             .get_many::<String>("package")
@@ -24,8 +16,17 @@ fn main() {
             .collect();
         install::install(packages)
     }
+    // Update
+    if let Some(_) = matches.subcommand_matches("update") {
+        update::update()
+    }
+    // Upgrade
+    if let Some(_) = matches.subcommand_matches("update") {
+        upgrade::upgrade()
+    }
+    // Tempcmd
     if let Some(_) = matches.subcommand_matches("tempcmd") {
-        let cfg = parse_config();
+        let cfg = Config::load_from_file("./package.toml");
         println!("{:?}", cfg)
     }
 }
@@ -54,9 +55,3 @@ fn cli() -> Command {
     return cmd;
 }
 
-fn parse_config() -> Config {
-    let rawt_toml = fs::read_to_string("./package.toml").expect("couldn't read package.toml");
-
-    let toml: Config = toml::from_str(&rawt_toml).expect("that shit aint work :(");
-    return toml;
-}
