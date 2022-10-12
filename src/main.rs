@@ -1,9 +1,8 @@
 use clap::{Arg, Command};
 mod commands;
-use commands::{install, update, upgrade};
+use commands::{install, update, upgrade, pack};
 mod package;
-use package::{Config};
-
+use package::Config;
 
 fn main() {
     let matches = cli().get_matches();
@@ -21,8 +20,16 @@ fn main() {
         update::update()
     }
     // Upgrade
-    if let Some(_) = matches.subcommand_matches("update") {
+    if let Some(_) = matches.subcommand_matches("upgrade") {
         upgrade::upgrade()
+    }
+    // Pack
+    if let Some(sub_m) = matches.subcommand_matches("pack") {
+        let dir = sub_m
+            .get_one::<String>("directory")
+            .expect("no args found");
+        pack::pack(dir)
+        
     }
     // Tempcmd
     if let Some(_) = matches.subcommand_matches("tempcmd") {
@@ -50,8 +57,16 @@ fn cli() -> Command {
                     .help("package you would like to find")
                     .num_args(1)]),
         )
+        .subcommand(
+            Command::new("pack")
+                .about("package a directory into a jfp package")
+                .arg(
+                    Arg::new("directory")
+                        .help("directory to package")
+                        .num_args(1),
+                ),
+        )
         .subcommand(Command::new("tempcmd").about(""));
 
     return cmd;
 }
-
