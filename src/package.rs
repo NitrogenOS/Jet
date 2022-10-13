@@ -1,15 +1,16 @@
 use serde::{Deserialize, Serialize};
-use std::fs;
-use toml;
+use std::{collections::HashMap, fs};
+use toml::{self, Value};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
-    name: String,
-    description: String,
-    version: String,
-    author: String,
-    license: String,
-    dependencies: Vec<String>,
+    pub name: String,
+    pub description: String,
+    pub version: String,
+    pub author: Option<String>,
+    pub license: Option<String>,
+    pub dependencies: Option<Vec<String>>,
+    pub copy: Option<HashMap<String, Value>>,
 }
 
 impl Config {
@@ -20,14 +21,16 @@ impl Config {
         author: String,
         license: String,
         dependencies: Vec<String>,
+        copy: HashMap<String, Value>
     ) -> Config {
         return Config {
             name: name,
             description: description,
             version: version,
-            author: author,
-            license: license,
-            dependencies: dependencies,
+            author: Some(author),
+            license: Some(license),
+            dependencies: Some(dependencies),
+            copy: Some(copy),
         };
     }
 
