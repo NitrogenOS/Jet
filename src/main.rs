@@ -1,10 +1,12 @@
 use clap::{Arg, Command};
 mod commands;
-use commands::{install, update, upgrade, pack};
+use commands::{install, update, upgrade};
 mod package;
 use package::Config;
+mod lib;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let matches = cli().get_matches();
     // Install
     if let Some(sub_m) = matches.subcommand_matches("install") {
@@ -13,7 +15,7 @@ fn main() {
             .expect("is present")
             .map(|s| s.as_str())
             .collect();
-        install::install(packages)
+        install::install(packages).await
     }
     // Update
     if let Some(_) = matches.subcommand_matches("update") {
@@ -22,14 +24,6 @@ fn main() {
     // Upgrade
     if let Some(_) = matches.subcommand_matches("upgrade") {
         upgrade::upgrade()
-    }
-    // Pack
-    if let Some(sub_m) = matches.subcommand_matches("pack") {
-        let dir = sub_m
-            .get_one::<String>("directory")
-            .expect("no args found");
-        pack::pack(dir)
-        
     }
     // Tempcmd
     if let Some(_) = matches.subcommand_matches("tempcmd") {
@@ -56,15 +50,6 @@ fn cli() -> Command {
                 .args(&[Arg::new("package")
                     .help("package you would like to find")
                     .num_args(1)]),
-        )
-        .subcommand(
-            Command::new("pack")
-                .about("package a directory into a jfp package")
-                .arg(
-                    Arg::new("directory")
-                        .help("directory to package")
-                        .num_args(1),
-                ),
         )
         .subcommand(Command::new("tempcmd").about(""));
 

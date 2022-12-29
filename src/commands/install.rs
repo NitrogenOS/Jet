@@ -1,6 +1,9 @@
-pub fn install(packages: Vec<&str>) {
-    println!("Installing... ");
+use crate::lib::download;
+
+pub async fn install(packages: Vec<&str>) {
     for package in packages {
-        println!("{}", package)
+        print!("{}, ", package);
+        download::download(package).await
     }
+
 }

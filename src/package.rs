@@ -14,30 +14,10 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(
-        name: String,
-        description: String,
-        version: String,
-        author: String,
-        license: String,
-        dependencies: Vec<String>,
-        copy: HashMap<String, Value>
-    ) -> Config {
-        return Config {
-            name: name,
-            description: description,
-            version: version,
-            author: Some(author),
-            license: Some(license),
-            dependencies: Some(dependencies),
-            copy: Some(copy),
-        };
-    }
-
     pub fn load_from_file(file: &str) -> Config {
-        let rawt_toml = fs::read_to_string(file).expect("couldn't read package.toml");
+        let raw_toml = fs::read_to_string(file).expect("couldn't read package.toml");
 
-        let data: Config = toml::from_str(&rawt_toml).unwrap();
+        let data: Config = toml::from_str(&raw_toml).unwrap();
         return data;
     }
 }
