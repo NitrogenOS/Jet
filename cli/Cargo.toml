@@ -1,0 +1,11 @@
+[package]
+name = "jet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = "4.3.10"
+jet_build = { version = "0.1.0", path = "../jet_build" }
+jet_upgrade = { version = "0.1.0", path = "../jet_upgrade" }
+nix = "0.26.2"
+tokio = { version = "1.29.0", features = ["macros", "rt-multi-thread"] }
