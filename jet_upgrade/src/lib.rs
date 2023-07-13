@@ -14,11 +14,11 @@ pub async fn upgrade_all() {
     for repo in repos {
         let repo = repo.clone();
         let mut mb_clone = mb.clone();
-        
+
         match repo.r#type {
             jet_core::RepoType::Git => todo!(),
             jet_core::RepoType::Jetlag => tasks.push(tokio::spawn(async move {
-                utils::test_download(&mut mb_clone, repo.name).await;
+                utils::download(&mut mb_clone, repo.name, repo.url).await;
                 Ok(())
             })),
         }

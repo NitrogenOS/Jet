@@ -11,6 +11,8 @@ pub struct PackageConfig {
     pub description: Option<String>,
     pub arch: Vec<PackageArch>,
 
+    pub dependencies: Option<HashMap<String, String>>,
+    pub confilicts: Option<HashMap<String, String>>,
     pub install: HashMap<String, InstallOpts>,
 }
 

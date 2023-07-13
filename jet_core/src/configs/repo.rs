@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::Config;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RepoConfig {
     pub repo: Vec<Repo>,
 }

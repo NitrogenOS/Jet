@@ -2,6 +2,7 @@
 members = [
     "jet_build",
     "jet_install",
+    "jet_uninstall",
     "jet_update",
     "jet_upgrade",
     "jet_core",

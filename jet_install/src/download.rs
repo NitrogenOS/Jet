@@ -1,14 +1,30 @@
-use std::{cmp::min, fs::{File, self}, io::Write, path::Path};
+use std::{
+    cmp::min,
+    fs::{self, File},
+    io::Write,
+    path::Path,
+};
 
 use futures_util::StreamExt;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
-use jet_core::REPO_DB_PATH;
+use jet_core::PKG_ARCHIVE_PATH;
 
-pub async fn download(mb: &mut MultiProgress, name: String, url: String) {
+pub async fn download(
+    mb: &mut MultiProgress,
+    url: String,
+    name: String,
+    version: String,
+    arch: String,
+) -> String {
     let client = reqwest::Client::new();
+    let path = Path::new(PKG_ARCHIVE_PATH).join(format!("{name}-{version}-{arch}.jpk"));
+
+    if path.exists() {
+        return String::from(path.to_str().unwrap());
+    }
 
     let resp = client
-        .get(&format!("{}/db/fetch", url))
+        .get(&format!("{url}/{name}/{version}?arch={arch}"))
         .send()
         .await
         .expect("failed to download package");
@@ -19,16 +35,16 @@ pub async fn download(mb: &mut MultiProgress, name: String, url: String) {
     pb.set_style(ProgressStyle::default_bar()
                     .template("{msg}\n{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})").unwrap()
                     .progress_chars("=>-"));
-    pb.set_message(format!("Syncing {}", name));
+    pb.set_message(format!("Syncing {}@{}", name, version));
 
     let mut downloaded: u64 = 0;
     let mut stream = resp.bytes_stream();
 
-    if !Path::new(REPO_DB_PATH).exists() {
-        fs::create_dir_all(Path::new(REPO_DB_PATH)).unwrap();
-    }
+    let file = File::create(&path);
 
-    let file = File::create(Path::new(REPO_DB_PATH).join(format!("{name}.db")));
+    if !Path::new(PKG_ARCHIVE_PATH).exists() {
+        fs::create_dir_all(Path::new(PKG_ARCHIVE_PATH)).unwrap();
+    }
 
     if let Err(err) = file {
         panic!("error {err}")
@@ -44,5 +60,8 @@ pub async fn download(mb: &mut MultiProgress, name: String, url: String) {
             downloaded = new;
             pb.set_position(new);
         }
+        println!("Finished downloading")
     }
+
+    String::from(path.to_str().unwrap())
 }

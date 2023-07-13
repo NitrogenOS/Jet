@@ -1,13 +1,9 @@
 [package]
-name = "jet_core"
+name = "jet_uninstall"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bincode = "1.3.3"
-flate2 = "1.0.26"
-serde = { version = "1.0.166", features = ["derive"] }
-tar = "0.4.38"
-toml = "0.7.5"
+jet_core = { version = "0.1.0", path = "../jet_core" }
